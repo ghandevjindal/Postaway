@@ -14,7 +14,15 @@ export default class UserController {
       res.send({"errorMessage": "Invalid credentials, please try again."});
     }else{
       req.session.userId = user.id;
-      res.send({"Message": "Login Successfull"});
+      const token = jwt.sign(
+        { userId: user.id, userEmail: user.email },
+        "CodingNinjas2016",
+        { expiresIn: "1h" }
+      );
+      res
+        .status(201)
+        .cookie("jwtToken", token, { maxAge: 900000, httpOnly: false })
+        .json({ status: "success", msg: "login successfull", token });
     }
   }
 

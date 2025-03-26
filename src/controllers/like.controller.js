@@ -12,8 +12,9 @@ export default class Jobs {
     }
 
     togglelike(req,res){
-        const like = likeModel.updateById(req.params.likeId,req.body);
-        return res.send({"like":like});
+        const likes = likeModel.getByPostId(req.params.postId);
+        // const like = likeModel.updateById(req.params.likeId,req.body);
+        // return res.send({"like":like});
     }
 
     deletelike(req,res){
