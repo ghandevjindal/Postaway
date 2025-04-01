@@ -24,17 +24,21 @@ export default class postModel{
         return posts.find(post => post.id == id);
     }
 
-    static updateById(id,body){
+    static async updateById(id,body){
         const index = posts.findIndex(post => post.id==id);
-        if(index != -1){
+        if (index == -1){
+            return null;
+        }else{
             posts[index] = {...posts[index], ...body};
         }
         return posts[index];
     }
 
-    static removeById(id){
+    static async removeById(id){
         const index = posts.findIndex(post => post.id==id);
-        if(index != -1){
+        if (index == -1){
+            return null;
+        }else{
             posts.splice(index, 1);
         }
         return posts;
