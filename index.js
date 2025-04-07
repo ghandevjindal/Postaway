@@ -7,6 +7,8 @@ import dotenv from 'dotenv';
 
 import userRouter from './src/routes/user.route.js';
 import postRouter from './src/routes/post.route.js';
+import commentRouter from './src/routes/comment.route.js';
+import likeRouter from './src/routes/like.route.js';
 
 import { uploadFile } from './src/middlewares/file-upload.middleware.js';;
 import { ApplicationError } from './src/error-handler/applicationError.js';
@@ -34,8 +36,10 @@ app.use(loggerMiddleware);
 
 app.use("/api-docs", swagger.serve, swagger.setup(apiDocs));
 
-app.use('/api/user', userRouter);
-app.use('/api/post', postRouter);
+app.use('/api', userRouter);
+app.use('/api/posts', jwtAuth, postRouter);
+app.use('/api/comments', jwtAuth, commentRouter);
+app.use('/api/likes', jwtAuth, likeRouter);
 
 // Define a simple route
 app.get('/', (req, res) => {

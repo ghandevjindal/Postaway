@@ -18,7 +18,6 @@ export default class UserController {
     if (user == undefined) {
       res.send({"errorMessage": "Invalid credentials, please try again."});
     }else{
-      req.session.userId = user.id;
       const token = jwt.sign(
         { userId: user.id, userEmail: user.email },
         process.env.JWT_SECRET,

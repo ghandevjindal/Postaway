@@ -5,14 +5,14 @@ export default class likeModel{
         this.postId = postId;
     }
 
-    static addlike(body, userId){
-        const newlike = new likeModel(likes.length+1, userId, body.postId);
+    static addlike(postId, userId){
+        const newlike = new likeModel(likes.length+1, userId, postId);
         likes.push(newlike);
         return likes;
     }
 
     static getByPostId(postId){
-        return likes.find(like => like.postId == postId);
+        return likes.filter(like => like.postId == postId);
     }
 
     static removeById(id){
@@ -28,5 +28,5 @@ export default class likeModel{
 var likes = [
     new likeModel(1, 1, 4),
     new likeModel(2, 2, 5),
-    new likeModel(3, 1, 4),
+    new likeModel(3, 2, 4),
 ]

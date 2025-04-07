@@ -6,8 +6,8 @@ export default class postModel{
         this.imageUrl = imageUrl;
     }
 
-    static addPost(body, userId){
-        const newPost = new postModel(posts.length+1, userId, body.caption, body.imageUrl);
+    static addPost(body, imgUrl, userId){
+        const newPost = new postModel(posts.length+1, userId, body.caption, imgUrl);
         posts.push(newPost);
         return posts;
     }
@@ -24,12 +24,14 @@ export default class postModel{
         return posts.find(post => post.id == id);
     }
 
-    static async updateById(id,body){
+    static async updateById(id, body, imageUrl, userId){
         const index = posts.findIndex(post => post.id==id);
         if (index == -1){
             return null;
         }else{
-            posts[index] = {...posts[index], ...body};
+            posts[index]['userId'] = userId;
+            posts[index]['caption'] = body.caption;
+            posts[index]['imageUrl'] = imageUrl;
         }
         return posts[index];
     }

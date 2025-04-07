@@ -6,17 +6,17 @@ export default class commentModel{
         this.content = content;
     }
 
-    static addcomment(body, userId){
-        const newcomment = new commentModel(comments.length+1, userId, body.postId, body.content);
+    static getByPostId(postId){
+        return comments.filter(comment => comment.postId == postId);
+    }
+
+    static addcomment(body, postId, userId){
+        const newcomment = new commentModel(comments.length+1, userId, postId, body.content);
         comments.push(newcomment);
         return comments;
     }
 
-    static getByPostId(postId){
-        return comments.find(comment => comment.postId == postId);
-    }
-
-    static updateById(id,body){
+    static updateById(id, body){
         const index = comments.findIndex(comment => comment.id==id);
         if(index != -1){
             comments[index] = {...comments[index], ...body};
