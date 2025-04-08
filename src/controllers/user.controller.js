@@ -32,13 +32,7 @@ export default class UserController {
 
   static userLogout(req, res) {
     res.clearCookie(process.env.COOKIE_NAME);
-    req.session.destroy((err) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send({"Message": "Logout Successfull"});
-      }
-    });
+    return res.send({"message": "Logout successfull"});
   }
 }
 

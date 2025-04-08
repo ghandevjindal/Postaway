@@ -1,19 +1,17 @@
 import express from 'express';
-import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import swagger from 'swagger-ui-express';
 import fs from 'fs';
 import dotenv from 'dotenv';
 
+import { ApplicationError } from './src/error-handler/applicationError.js';
+import jwtAuth from './src/middlewares/jwtAuth.js';
+import loggerMiddleware from './src/middlewares/logger.middleware.js';
+
 import userRouter from './src/routes/user.route.js';
 import postRouter from './src/routes/post.route.js';
 import commentRouter from './src/routes/comment.route.js';
 import likeRouter from './src/routes/like.route.js';
-
-import { uploadFile } from './src/middlewares/file-upload.middleware.js';;
-import { ApplicationError } from './src/error-handler/applicationError.js';
-import jwtAuth from './src/middlewares/jwtAuth.js';
-import loggerMiddleware from './src/middlewares/logger.middleware.js';
 
 const apiDocs = JSON.parse(fs.readFileSync('./swagger.json', 'utf8'));
 
@@ -21,30 +19,19 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(
-  session({
-    secret: 'SecretKey',
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false },
-  })
-);
-
 app.use(express.json());
 app.use(cookieParser());
-app.use(loggerMiddleware);
 
 app.use("/api-docs", swagger.serve, swagger.setup(apiDocs));
 
 app.use('/api', userRouter);
+
+app.use(loggerMiddleware);
+
 app.use('/api/posts', jwtAuth, postRouter);
 app.use('/api/comments', jwtAuth, commentRouter);
 app.use('/api/likes', jwtAuth, likeRouter);
 
-// Define a simple route
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
 
 // Error handler middleware
 app.use((err, req, res, next)=>{
