@@ -3,6 +3,7 @@ import cookieParser from 'cookie-parser';
 import swagger from 'swagger-ui-express';
 import fs from 'fs';
 import dotenv from 'dotenv';
+import cors from 'cors';
 
 import { ApplicationError } from './src/error-handler/applicationError.js';
 import jwtAuth from './src/middlewares/jwtAuth.js';
@@ -18,6 +19,12 @@ const apiDocs = JSON.parse(fs.readFileSync('./swagger.json', 'utf8'));
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
 
 app.use(express.json());
 app.use(cookieParser());

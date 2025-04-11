@@ -2,8 +2,8 @@
     "openapi": "3.0.0",
     "info":{
         "version":"1.0.0",
-        "description":"API for E-Commerce application",
-        "title":"E-commerce API"
+        "description":"API for Postaway application",
+        "title":"Postaway API"
     },
     "servers":[
         {
@@ -11,21 +11,54 @@
         }
     ],
 
-    "components":
-    {
-        "securitySchemes":
-        {
-            "JWT":
-            {
-                "in":"header",
-                "name":"Authorization",
-                "type": "apiKey"
+    "components": {
+        "securitySchemes": {
+            "cookieAuth": {
+            "type": "apiKey",
+            "in": "cookie",
+            "name": "jwttoken"
             }
         }
     },
 
     "paths":
     {
+        "/api/signup": 
+        {
+            "post":
+            {
+                "tags": ["Users"],
+                "summary":"Signup",
+                "description":"User signup for registration",
+                "requestBody":
+                {
+                    "content":
+                    {
+                        "application/json":{
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name":{
+                                        "type": "string"
+                                    },
+                                    "email":{
+                                        "type": "string"
+                                    },
+                                    "password":{
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses":{
+                    "200": {
+                        "description":"User Added"
+                    }
+                }
+            }
+        },
         "/api/signin": 
         {
             "post":
@@ -62,6 +95,20 @@
                 }
             }
         },
+        "/api/logout": 
+        {
+            "post":
+            {
+                "tags": ["Users"],
+                "summary":"Logout",
+                "description":"User logout to clear token",
+                "responses":{
+                    "200": {
+                        "description":"Logout successfull"
+                    }
+                }
+            }
+        },
 
         "/api/posts/all": {
             "get":
@@ -69,16 +116,315 @@
                 "tags": ["Posts"],
                 "summary":"Get Posts",
                 "description":"User will get all posts",
-                "security":[{"JWT": {} }],
+                "security":[{"cookieAuth": {} }],
                 "responses":
                 {
                     "200": {
-                        "Posts":"posts"
+                        "description":"List of posts"
                     },
-                    "401": { 
-                        "success": false, 
-                        "msg": "error" 
+                    "401": {
+                        "description": "Unauthorized" 
                     }
+                }
+            }
+        },
+        "/api/posts/{id}": {
+            "get": {
+                "tags": ["Posts"],
+                "summary": "Get Post By ID",
+                "description": "Retrieve a post by its ID",
+                "security": [{ "cookieAuth": {} }],
+                "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "schema": { "type": "string" }
+                }
+                ],
+                "responses": {
+                "200": {
+                    "description": "Post fetched successfully"
+                },
+                "404": {
+                    "description": "Post not found"
+                }
+                }
+            },
+            "put": {
+                "tags": ["Posts"],
+                "summary": "Update Post By ID",
+                "description": "Update a post by ID (with optional file upload)",
+                "security": [{ "cookieAuth": {} }],
+                "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "schema": { "type": "string" }
+                }
+                ],
+                "requestBody": {
+                "content": {
+                    "multipart/form-data": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                        "title": { "type": "string" },
+                        "description": { "type": "string" },
+                        "file": {
+                            "type": "string",
+                            "format": "binary"
+                        }
+                        }
+                    }
+                    }
+                }
+                },
+                "responses": {
+                "200": {
+                    "description": "Post updated successfully"
+                },
+                "500": {
+                    "description": "Error updating post"
+                }
+                }
+            },
+            "delete": {
+                "tags": ["Posts"],
+                "summary": "Delete Post",
+                "description": "Delete a post by ID",
+                "security": [{ "cookieAuth": {} }],
+                "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "schema": { "type": "string" }
+                }
+                ],
+                "responses": {
+                "200": {
+                    "description": "Post deleted successfully"
+                },
+                "404": {
+                    "description": "Post not found"
+                }
+                }
+            }
+        },
+        "/api/posts": {
+            "get": {
+                "tags": ["Posts"],
+                "summary": "Get User's Posts",
+                "description": "Get posts created by the logged-in user",
+                "security": [{ "cookieAuth": {} }],
+                "responses": {
+                "200": {
+                    "description": "User's posts fetched successfully"
+                }
+                }
+            },
+            "post": {
+                "tags": ["Posts"],
+                "summary": "Add Post",
+                "description": "Create a new post with optional file upload",
+                "security": [{ "cookieAuth": {} }],
+                "requestBody": {
+                "content": {
+                    "multipart/form-data": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                        "title": { "type": "string" },
+                        "description": { "type": "string" },
+                        "file": {
+                            "type": "string",
+                            "format": "binary"
+                        }
+                        },
+                        "required": ["title", "description"]
+                    }
+                    }
+                }
+                },
+                "responses": {
+                "201": {
+                    "description": "Post created successfully"
+                }
+                }
+            }
+        },
+
+        "/api/comments/{id}": {
+            "get": {
+                "tags": ["Comments"],
+                "summary": "Get Comments for Post",
+                "description": "Fetch all comments for a given post ID",
+                "security": [{ "cookieAuth": {} }],
+                "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "schema": { "type": "string" },
+                    "description": "Post ID"
+                }
+                ],
+                "responses": {
+                "200": {
+                    "description": "List of comments for the post"
+                },
+                "404": {
+                    "description": "Post or comments not found"
+                }
+                }
+            },
+            "post": {
+                "tags": ["Comments"],
+                "summary": "Add Comment to Post",
+                "description": "Add a new comment to the given post ID",
+                "security": [{ "cookieAuth": {} }],
+                "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "schema": { "type": "string" },
+                    "description": "Post ID"
+                }
+                ],
+                "requestBody": {
+                "content": {
+                    "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                        "comment": { "type": "string" }
+                        },
+                        "required": ["comment"]
+                    }
+                    }
+                }
+                },
+                "responses": {
+                "201": {
+                    "description": "Comment added successfully"
+                }
+                }
+            },
+            "put": {
+                "tags": ["Comments"],
+                "summary": "Update Comment",
+                "description": "Update a comment for a given post ID",
+                "security": [{ "cookieAuth": {} }],
+                "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "schema": { "type": "string" },
+                    "description": "Comment ID"
+                }
+                ],
+                "requestBody": {
+                "content": {
+                    "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                        "comment": { "type": "string" }
+                        },
+                        "required": ["comment"]
+                    }
+                    }
+                }
+                },
+                "responses": {
+                "200": {
+                    "description": "Comment updated successfully"
+                },
+                "404": {
+                    "description": "Comment not found"
+                }
+                }
+            },
+            "delete": {
+                "tags": ["Comments"],
+                "summary": "Delete Comment",
+                "description": "Delete a comment by its ID",
+                "security": [{ "cookieAuth": {} }],
+                "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "schema": { "type": "string" },
+                    "description": "Comment ID"
+                }
+                ],
+                "responses": {
+                "200": {
+                    "description": "Comment deleted successfully"
+                },
+                "404": {
+                    "description": "Comment not found"
+                }
+                }
+            }
+        },
+
+        "/api/likes/{postId}": {
+            "get": {
+                "tags": ["Likes"],
+                "summary": "Get Likes on a Post",
+                "description": "Returns all likes on a specific post by post ID.",
+                "security": [{ "cookieAuth": {} }],
+                "parameters": [
+                {
+                    "name": "postId",
+                    "in": "path",
+                    "required": true,
+                    "schema": {
+                    "type": "string"
+                    },
+                    "description": "Post ID"
+                }
+                ],
+                "responses": {
+                "200": {
+                    "description": "List of users who liked the post"
+                },
+                "404": {
+                    "description": "Post not found"
+                }
+                }
+            }
+        },
+        "/api/likes/toggle/{postId}": {
+            "get": {
+                "tags": ["Likes"],
+                "summary": "Toggle Like on a Post",
+                "description": "Toggle like/unlike on a post by the current user.",
+                "security": [{ "cookieAuth": {} }],
+                "parameters": [
+                {
+                    "name": "postId",
+                    "in": "path",
+                    "required": true,
+                    "schema": {
+                    "type": "string"
+                    },
+                    "description": "Post ID"
+                }
+                ],
+                "responses": {
+                "200": {
+                    "description": "Like toggled successfully (added or removed)"
+                },
+                "404": {
+                    "description": "Post not found"
+                }
                 }
             }
         }

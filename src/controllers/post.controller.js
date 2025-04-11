@@ -46,4 +46,36 @@ export default class PostController {
             return res.status(500).send({ message: "Error deleting post", error });
         }
     }
+
+    static filterByCaption(req, res) {
+        const searchTerm = req.query.q;
+        const filteredPosts = postModel.filterByCaption(searchTerm);
+        return res.send({"Posts": filteredPosts});
+    }
+
+    static saveAsDraft(req, res) {
+        const post = postModel.saveAsDraft(req.params.id);
+        if(!post) {
+          return res.status(404).send({message: "Post not found"});
+        }
+        return res.status(200).send(post);
+      }
+      
+    static archivePost(req, res) {
+        const post = postModel.archivePost(req.params.id);
+        if(!post) {
+          return res.status(404).send({message: "Post not found"});
+        }
+        return res.status(200).send(post);
+    }
+      
+    static getDrafts(req, res) {
+        const drafts = postModel.getDrafts();
+        return res.status(200).send(drafts);
+    }
+      
+    static getArchived(req, res) {
+        const archived = postModel.getArchived();
+        return res.status(200).send(archived);
+    }
 }
