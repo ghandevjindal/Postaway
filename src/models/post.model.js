@@ -64,7 +64,7 @@ export default class postModel{
           return post;
         }
         return null;
-      }
+    }
       
     static archivePost(id) {
         const post = this.getById(id);

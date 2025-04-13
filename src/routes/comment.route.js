@@ -3,7 +3,7 @@ import CommentsController from "../controllers/comment.controller.js";
 
 const commentRouter = express.Router();
 
-commentRouter.route("/:id").get(CommentsController.getcomments);
+commentRouter.route("/:id").get(CommentsController.getcomments); // /comments/:id?page=1&limit=10
 
 commentRouter.route("/:id").post(CommentsController.addcomment);
 

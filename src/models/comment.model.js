@@ -35,7 +35,7 @@ export default class commentModel{
 }
 
 var comments = [
-    new commentModel(1, 1, 4, "comment1"),
-    new commentModel(2, 2, 5, "comment2"),
-    new commentModel(3, 1, 4, "comment3"),
+    new commentModel(1, 1, 3, "comment1"),
+    new commentModel(2, 2, 2, "comment2"),
+    new commentModel(3, 1, 1, "comment3"),
 ]

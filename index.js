@@ -13,6 +13,7 @@ import userRouter from './src/routes/user.route.js';
 import postRouter from './src/routes/post.route.js';
 import commentRouter from './src/routes/comment.route.js';
 import likeRouter from './src/routes/like.route.js';
+import bookmarkRouter from './src/routes/bookmark.route.js';
 
 const apiDocs = JSON.parse(fs.readFileSync('./swagger.json', 'utf8'));
 
@@ -38,6 +39,7 @@ app.use(loggerMiddleware);
 app.use('/api/posts', jwtAuth, postRouter);
 app.use('/api/comments', jwtAuth, commentRouter);
 app.use('/api/likes', jwtAuth, likeRouter);
+app.use('/api/bookmarks', jwtAuth, bookmarkRouter);
 
 
 // Error handler middleware

@@ -26,7 +26,7 @@ export default class likeModel{
 }
 
 var likes = [
-    new likeModel(1, 1, 4),
-    new likeModel(2, 2, 5),
-    new likeModel(3, 2, 4),
+    new likeModel(1, 1, 2),
+    new likeModel(2, 2, 2),
+    new likeModel(3, 2, 3),
 ]
